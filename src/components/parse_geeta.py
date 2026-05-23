@@ -140,10 +140,10 @@ class GitaIngestor:
         """
         logging.info("Initializing line-by-line regex parsing token validation pass.")
         
-        chapter_pattern = re.compile(r'CHAPTER\s+([A-Z\s\-]+|\d+)', re.IGNORECASE)
-        text_pattern = re.compile(r'^TEXTS?\s+(\d+[\s\-–&,]+\d*|\d+)', re.IGNORECASE)
-        translation_pattern = re.compile(r'^TRANSLATION$', re.IGNORECASE)
-        purport_pattern = re.compile(r'^PURPORT$', re.IGNORECASE)
+        chapter_pattern = re.compile(r'CHAPTER\s+([A-Z\s\-]+|\d+)')
+        text_pattern = re.compile(r'^TEXTS?\s+(\d+[\s\-–&,]+\d*|\d+)')
+        translation_pattern = re.compile(r'^TRANSLATION$')
+        purport_pattern = re.compile(r'^PURPORT$')
 
         lines = raw_text.split('\n')
         all_verses = []
