@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify, send_file
 from dotenv import load_dotenv
 from google import genai
 from src.logger import logging as logger
+import time
 
 # Import your custom AI engines
 from src.components.vectorization_and_chunking import GitaHybridRetriever
@@ -81,15 +82,27 @@ def chat_with_gita():
 
         # D. Execute Summarization using Gemma 4 31B
         SUMMARY_MODEL_NAME = "models/gemma-4-31b-it" 
-        
-        response = llm_client.models.generate_content(
-            model=SUMMARY_MODEL_NAME,
-            contents=[{"role": "user", "parts": [{"text": prompt}]}],
-            config=genai.types.GenerateContentConfig(
-                system_instruction=system_instruction,
-                temperature=0.6 
-            )
-        )
+        for attempt in range(3):
+            try:
+                response = llm_client.models.generate_content(
+                    model=SUMMARY_MODEL_NAME,
+                    contents=[{"role": "user", "parts": [{"text": prompt}]}],
+                    config=genai.types.GenerateContentConfig(
+                        system_instruction=system_instruction,
+                        temperature=0.6 
+                    )
+                )
+                summary_text = response.text.strip()
+                break # Success! Break out of the loop
+                
+            except Exception as e:
+                if "500" in str(e) and attempt < 2:
+                    logger.warning(f"Summarizer server busy (500). Retrying... (Attempt {attempt + 1}/3)")
+                    time.sleep(2)
+                else:
+                    logger.error(f"Summarization failed: {str(e)}")
+                    return jsonify({"error": "Google's AI servers are currently overloaded. Please try again in a moment."}), 500
+                
         
         # E. Return the JSON Payload
         return jsonify({

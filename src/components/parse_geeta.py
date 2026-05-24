@@ -341,7 +341,7 @@ class GitaIngestor:
             logging.critical(f"Pipeline crashed due to unhandled runtime exception: {str(e)}")
 
 
-# # Execution Block (Optional: Useful for direct script testing)
-# if __name__ == "__main__":
-#     ingestor = GitaIngestor()
-#     ingestor.run_ingestion()
+# Execution Block (Optional: Useful for direct script testing)
+if __name__ == "__main__":
+    ingestor = GitaIngestor()
+    ingestor.run_ingestion()

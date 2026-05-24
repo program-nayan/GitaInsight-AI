@@ -3,6 +3,7 @@ import numpy as np
 from src.logger import logging as logger
 import sys
 import os
+import time
 from dotenv import load_dotenv
 from google import genai
 from src.exception import CustomException
@@ -33,22 +34,24 @@ class GitaSearchPipeline:
         (e.g., anger, frustration with authority, abandon prescribed duties, attachment to results). 
         Return ONLY a single string of comma-separated keywords. Do not write sentences.
         """
-
-        try:
-            # CORRECT GOOGLE GENAI SYNTAX
-            response = self.client.models.generate_content(
-                model=self.MODEL_NAME,
-                contents=f"User Problem: {user_query}",
-                config=genai.types.GenerateContentConfig(
-                    system_instruction=system_prompt,
-                    temperature=0.3 # Low temperature for strict keyword extraction
+        for attempt in range(3):
+            try:
+                response = self.client.models.generate_content(
+                    model=self.MODEL_NAME,
+                    contents=f"User Problem: {user_query}",
+                    config=genai.types.GenerateContentConfig(
+                        system_instruction=system_prompt,
+                        temperature=0.3 # Low temperature for strict keyword extraction
+                    )
                 )
-            )
-            expanded_query = response.text.strip()
-        except Exception as e:
-            logger.error(f"LLM Rewriting failed. Error: {str(e)}")
-            expanded_query = ""
-            raise CustomException(e, sys)
+                expanded_query = response.text.strip()
+            except Exception as e:
+                if "500" in str(e) and attempt < 2:
+                    logger.warning(f"Google Server busy (500). Retrying in 2 seconds... (Attempt {attempt + 1}/3)")
+                    time.sleep(2)
+                else:
+                    logger.error(f"LLM Rewriting failed after 3 attempts. Error: {str(e)}")
+                    raise CustomException(e, sys)
 
         
         if not expanded_query:

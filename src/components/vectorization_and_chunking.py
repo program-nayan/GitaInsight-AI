@@ -121,7 +121,3 @@ class GitaHybridRetriever:
         self.bm25_engine = BM25Okapi(tokenized_corpus)
         logger.info(f"BM25 Engine indexed {len(tokenized_corpus)} chunks.")
 
-
-# if __name__ == "__main__":
-
-#     retriever = GitaHybridRetriever(json_data_path="./data/gita_structured.json")
