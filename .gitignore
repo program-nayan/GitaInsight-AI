@@ -12,3 +12,4 @@ logs/
 # IDE settings and data
 .vscode/
 data/
+chroma_db/

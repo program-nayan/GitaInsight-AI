@@ -15,8 +15,9 @@ from src.exception import CustomException
 try:
     from indic_transliteration import sanscript
     from indic_transliteration.sanscript import transliterate
-except ImportError:
+except ImportError as e:
     print("Please install the transliteration package: pip install indic_transliteration")
+    raise CustomException(e, sys)
     sys.exit(1)
 
 
