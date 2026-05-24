@@ -30,7 +30,7 @@ class GitaSearchPipeline:
         system_prompt = """
         You are a semantic query expander. Analyze the user's modern problem. 
         Extract the core emotion and translate it into Bhagavad Gita philosophical themes 
-        (e.g., duty, detachment, illusion, anger, lamentation, karma,etc). 
+        (e.g., anger, frustration with authority, abandon prescribed duties, attachment to results). 
         Return ONLY a single string of comma-separated keywords. Do not write sentences.
         """
 
@@ -41,7 +41,7 @@ class GitaSearchPipeline:
                 contents=f"User Problem: {user_query}",
                 config=genai.types.GenerateContentConfig(
                     system_instruction=system_prompt,
-                    temperature=0.2 # Low temperature for strict keyword extraction
+                    temperature=0.3 # Low temperature for strict keyword extraction
                 )
             )
             expanded_query = response.text.strip()
@@ -131,14 +131,3 @@ class GitaSearchPipeline:
             
         return final_results
     
-# if __name__ == "__main__":
-#     # 1. Boot up the Storage Engine (Your previous class)
-#     # This automatically loads JSON, chunks it, and builds Chroma & BM25
-#     retriever_db = GitaHybridRetriever(json_data_path="./data/gita_structured.json")
-    
-#     # 2. Boot up the Search Engine (The new class)
-#     search_pipeline = GitaSearchPipeline(retriever_db)
-    
-#     # 3. Execute a search!
-#     user_problem = "I hate my boss and I want to quit my job."
-#     results = search_pipeline.execute_search(user_query=user_problem, top_k=3)
