@@ -13,3 +13,5 @@ logs/
 .vscode/
 data/
 chroma_db/
+
+.env
